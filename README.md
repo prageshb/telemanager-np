@@ -156,7 +156,7 @@ The system automatically manages resources based on available hardware:
 
 ## License
 
-This is a private close source project with proper functionality of a SaaS.
+This is a private closed source project with proper functionality of a SaaS.
 
 ## Support
 
