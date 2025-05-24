@@ -156,8 +156,8 @@ The system automatically manages resources based on available hardware:
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This is a private close source project with proper functionality of a SaaS.
 
 ## Support
 
-For support, please open an issue in the repository or contact the development team. 
+If you want to use this bot dm <a href="https://t.me/fiestyseer">@FiestySeer<a> on telegram.
