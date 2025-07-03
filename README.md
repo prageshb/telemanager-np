@@ -166,8 +166,8 @@ A Telegram bot platform for managing group memberships with time-based access co
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is closed source project.
 
 ## Support
 
-For support, please open an issue in the repository or contact the development team. 
+For support and further information, DM <a href="https://t.me/fiestyseer">@FiestySeer</a> in Telegram. 
