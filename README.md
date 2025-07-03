@@ -1,19 +1,138 @@
-# Telegram Bot Manager
+# Telegram Membership Manager Bot
 
-A powerful Telegram bot management system with multi-bot support, enhanced logging, and automatic member management.
+A Telegram bot platform for managing group memberships with time-based access control. Now supports **multi-bot management** with process isolation and resource monitoring.
 
 ## Features
 
-- 🔐 Secure access control with admin management
-- 🤖 Multi-bot support with resource management
-- 📊 Automatic cleanup of expired members (every 30 minutes)
-- 📝 Enhanced logging with local timestamps
-- 🔄 Auto-recovery and error handling
-- 📈 Resource monitoring and optimization
-- 👥 Member management with invite links
-- 📱 User-friendly commands and interface
-- 🔍 Detailed system statistics and monitoring
-- 🛡️ Support for hidden user accounts
+- **Multi-Bot Management**
+  - Add, remove, start, stop, and monitor multiple bots from a single super admin interface
+  - Each bot runs in its own process and database for full isolation
+  - Resource-aware: system checks CPU and RAM before starting new bots
+- **Group Management**
+  - Add/remove groups
+  - Automatic group registration
+  - Group access control
+  - Join request handling
+- **Plan Management**
+  - Create and manage membership plans
+  - Set custom durations
+  - Add/remove groups from plans
+  - Edit plan details (name, duration, groups)
+  - Automatic handling of plan changes for existing members
+- **Member Management**
+  - Add members to plans
+  - Automatic member removal on expiry
+  - Membership extension handling
+  - Member access tracking
+  - Expiry notifications
+  - Join request approval for active members
+- **Admin Features**
+  - Admin user management
+  - Broadcast messages to members
+  - System statistics dashboard
+  - Member list export
+  - Manual cleanup trigger
+- **Resource Management**
+  - Per-bot process and database
+  - System resource monitoring (CPU, RAM)
+  - Batch bot startup
+  - Automatic cleanup and error recovery
+
+---
+
+## Command Reference
+
+### 🧑 User Commands
+- `/start` — Start the bot and register yourself
+- `/join` — View your active memberships and join groups (shows plans, groups, expiry, and join buttons)
+- `/help` — Show help message
+
+### 👮 Admin Commands (per-bot)
+- `/addgroup` — Add a new group to the system
+- `/listgroups` — List all groups
+- `/removegroup` — Remove a group from the system
+- `/addplan` — Create a new membership plan
+- `/listplans` — List all plans
+- `/editplan` — Edit an existing plan (name, duration, groups)
+- `/removeplan` — Remove a plan
+- `/addmember` — Add a member to a plan (with invite link generation and extension logic)
+- `/listmembers` — List all active members (with pagination)
+- `/removemember` — Remove a member from all plans/groups
+- `/getuser` — Get user information (ID lookup)
+- `/dashboard` — View system statistics (overall, plans, groups, memberships)
+- `/broadcast` — Send a message (text/media) to all users or active members
+- `/cleanup` — Manually trigger expired member cleanup
+- `/export` — Export member data to CSV
+- `/teachme` — Show admin tutorial guide
+
+### 🦸 Super Admin Commands (superbot only)
+- `/addbot` — Add a new bot to the system (requires bot token)
+- `/listbots` — List all managed bots
+- `/removebot` — Remove a bot from the system
+- `/startbot` — Start a specific bot
+- `/stopbot` — Stop a specific bot
+- `/restartbot` — Restart a specific bot
+- `/botstatus` — View status of all bots
+- `/botadmins` — Manage admins for each bot
+- `/startall` — Start all bots
+- `/stopall` — Stop all bots
+- `/botdatabase` — Show database path for each bot
+
+---
+
+## Membership & Plan Features
+
+- Create plans with custom durations
+- Add multiple groups to a plan
+- Edit plan details at any time
+- Automatic handling of plan changes:
+  - Duration increase: extends remaining time
+  - Duration decrease: recalculates remaining time
+  - Groups added: creates access for existing members
+  - Groups removed: revokes access for existing members
+- Time-based access control
+- Automatic member removal on expiry
+- Expiry notifications
+- Join request approval for active members
+- Membership extension handling
+- Access tracking and management
+
+## System Features
+
+- **Automatic Cleanup**: Runs every 30 minutes, removes expired members, revokes invite links, sends expiry notifications, updates member status
+- **Error Handling**: Graceful error recovery, detailed error logging, automatic reconnection, resource monitoring
+- **Security**: Admin-only commands, secure invite link handling, join request verification, access control enforcement
+
+## Multi-Bot Resource Management
+
+- Each bot runs in its own process and database (full isolation)
+- Maximum bots per CPU core (default: 5)
+- Maximum 80% of total system memory used
+- Per-bot memory limit (default: 10% of total system memory)
+- Bots started in batches (default: 5 at a time)
+- System load and resource usage are continuously monitored
+
+## Setup
+
+1. Create a new bot with [@BotFather](https://t.me/BotFather)
+2. Get your bot token
+3. Add the bot to your groups and grant permissions:
+   - Add Members
+   - Ban Users
+   - Invite Users
+   - Manage Chat
+4. Start the bot with `/start`
+5. Use `/teachme` for admin tutorial
+6. For super admin, set up the superbot with `SUPER_BOT_TOKEN` and use `/addbot` to add/manage other bots
+
+## Database Structure
+
+- **Main Database (superbot):**
+  - `managed_bots`: Bot management records
+  - `bot_admins`: Super admin and per-bot admin records
+  - `bot_activity_logs`: Activity logs for all bots
+- **Bot-specific Databases:**
+  - `users`, `admins`, `groups`, `plans`, `member_access` (per bot)
 
 ## System Requirements
 
@@ -23,104 +142,10 @@ A powerful Telegram bot management system with multi-bot support, enhanced loggi
 - Multi-core CPU recommended
 - Stable internet connection
 
-## Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd telegram-bot-manager
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Create a `.env` file with the following variables:
-```env
-BOT_TOKEN=your_bot_token
-SUPER_BOT_TOKEN=your_super_bot_token
-```
-
-4. Initialize the database:
-```bash
-npm run init-db
-```
-
-5. Start the bot:
-```bash
-npm start
-```
-
-## Database Structure
-
-### Main Database (main.db)
-- users: User information and registration
-- admins: Administrator accounts
-- groups: Managed Telegram groups
-- plans: Membership plans
-- member_access: Member access records
-- managed_bots: Bot management records
-
-### Bot-specific Databases (bot_[id].db)
-- users: User information for specific bot
-- admins: Admin records for specific bot
-- groups: Groups managed by specific bot
-- plans: Plans available in specific bot
-- member_access: Member access records for specific bot
-
-## Commands
-
-### User Commands
-- `/start` - Start the bot
-- `/join` - View active memberships
-- `/help` - Show help message
-
-### Admin Commands
-- `/addgroup` - Add a new group
-- `/listgroups` - List all groups
-- `/addplan` - Create a new plan
-- `/listplans` - List all plans
-- `/addmember` - Add a new member
-- `/listmembers` - List all active members
-- `/removemember` - Remove a member
-- `/getuser` - Get user information
-- `/dashboard` - View system statistics
-- `/broadcast` - Send message to members
-- `/cleanup` - Manually trigger cleanup
-- `/teachme` - Show admin tutorial
-
-### Super Admin Commands
-- `/addbot` - Add a new bot to the system
-- `/listbots` - List all managed bots
-- `/removebot` - Remove a bot from the system
-- `/botstats` - View bot statistics
-- `/restartbot` - Restart a specific bot
-- `/stopbot` - Stop a specific bot
-- `/startbot` - Start a specific bot
-
-## Resource Management
-
-The system automatically manages resources based on available hardware:
-
-### CPU-based Limits
-- Maximum 5 bots per CPU core
-- Example: 8-core system can handle up to 40 bots (CPU-wise)
-
-### Memory-based Limits
-- Maximum 80% of total system memory
-- Per-bot memory limit: 10% of total system memory
-- Example: 10GB RAM system can handle 8 bots (memory-wise)
-
-### Batch Processing
-- Bots are started in batches of 5
-- System load is managed automatically
-- Resource usage is continuously monitored
-
 ## Recent Updates
 
 ### Version 2.0.0
-- Added multi-bot support
+- Added multi-bot support (superbot manager)
 - Enhanced logging system with local timestamps
 - Improved error handling and recovery
 - Added resource monitoring and management
@@ -131,25 +156,18 @@ The system automatically manages resources based on available hardware:
 - Improved user registration process
 - Added automatic member access management
 
-### Version 1.1.0
-- Added `/getuser` command
-- Enhanced message handling
-- Improved error handling
-- Added user registration on first interaction
-- Updated cleanup process
+## Contributing
 
-### Version 1.0.0
-- Initial release
-- Basic bot functionality
-- Member management
-- Group management
-- Plan management
-- Admin system
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## License
 
-This is a private closed source project with proper functionality of a SaaS.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Support
 
-If you want to use this bot dm <a href="https://t.me/fiestyseer">@FiestySeer<a> on telegram.
+For support, please open an issue in the repository or contact the development team. 
